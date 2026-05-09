@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Войти — GoldSpin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#1a4a2e 0%,#0d2818 40%,#060f0a 100%);font-family:'Oswald',sans-serif;color:#f5d060;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:80px;letter-spacing:12px;color:#f5d060;text-shadow:0 0 40px rgba(245,208,96,.3),3px 3px 0 #8b6914,6px 6px 0 #3a2800;text-align:center;line-height:1}
+.logo-sub{font-size:13px;letter-spacing:6px;color:#7a6030;text-transform:uppercase;text-align:center;margin-top:6px;margin-bottom:40px}
+.stars{display:flex;justify-content:center;gap:10px;margin-bottom:32px}
+.stars span{width:8px;height:8px;background:#c8940a;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:twk 1.6s ease-in-out infinite}
+.stars span:nth-child(2){animation-delay:.3s}.stars span:nth-child(3){animation-delay:.6s}.stars span:nth-child(4){animation-delay:.9s}.stars span:nth-child(5){animation-delay:1.2s}
+@keyframes twk{0%,100%{opacity:1}50%{opacity:.15}}
+.card{width:100%;max-width:380px;background:linear-gradient(160deg,#2a1a00,#1a1000);border:2px solid rgba(212,175,55,.2);border-radius:20px;padding:36px;box-shadow:0 0 0 1px rgba(200,148,10,.2),0 32px 80px rgba(0,0,0,.7)}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:#c8a84a;margin-bottom:24px;text-align:center}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:11px;color:#7a6030;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px}
+.field input{width:100%;background:rgba(0,0,0,.4);border:1px solid rgba(212,175,55,.15);border-radius:10px;padding:14px 16px;font-family:'Oswald',sans-serif;font-size:17px;color:#f5d060;outline:none;transition:border .2s}
+.field input::placeholder{color:#3a2810}
+.field input:focus{border-color:rgba(212,175,55,.5)}
+.error-msg{background:rgba(180,40,40,.12);border:1px solid rgba(180,40,40,.3);border-radius:8px;padding:10px 14px;font-size:14px;color:#e07070;margin-bottom:16px;display:none;text-align:center}
+.error-msg.show{display:block}
+.submit-btn{width:100%;height:54px;border-radius:12px;background:linear-gradient(160deg,#c8940a,#8a6408);border:none;color:#0d0800;font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;cursor:pointer;transition:all .15s;box-shadow:0 4px 0 #5a3e00}
+.submit-btn:hover{background:linear-gradient(160deg,#e0a80c,#a07a0a);transform:translateY(-1px)}
+.submit-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #5a3e00}
+.note{text-align:center;font-size:12px;color:#4a3818;letter-spacing:.5px;margin-top:20px;line-height:1.6}
+.accounts-section{width:100%;max-width:380px;margin-top:20px}
+.accounts-title{font-size:11px;color:#5a4020;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;text-align:center}
+.accounts-list{display:flex;flex-direction:column;gap:6px}
+.account-chip{background:rgba(0,0,0,.35);border:1px solid rgba(212,175,55,.12);border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .2s}
+.account-chip:hover{border-color:rgba(212,175,55,.35);background:rgba(212,175,55,.06)}
+.account-name{font-size:15px;color:#c8a84a;letter-spacing:1px}
+.account-bal{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#f5d060}
+</style>
+</head>
+<body>
+
+<div class="logo">GOLDSPIN</div>
+<div class="logo-sub">Твоё персональное казино</div>
+<div class="stars"><span></span><span></span><span></span><span></span><span></span></div>
+
+<div class="card">
+  <div class="card-title">ВОЙТИ / СОЗДАТЬ</div>
+  <div class="error-msg" id="error-msg"></div>
+  <div class="field">
+    <label>Имя игрока</label>
+    <input type="text" id="username" placeholder="Придумай имя..." maxlength="20" autocomplete="off" />
+  </div>
+  <button class="submit-btn" onclick="handleEnter()">ИГРАТЬ</button>
+  <div class="note">
+    Введи любое имя — если такой игрок уже есть,<br>
+    баланс и статистика загрузятся автоматически.
+  </div>
+</div>
+
+<div class="accounts-section" id="accounts-section" style="display:none">
+  <div class="accounts-title">Сохранённые игроки</div>
+  <div class="accounts-list" id="accounts-list"></div>
+</div>
+
+<script>
+// Если уже вошёл — сразу на главную
+if (localStorage.getItem('gs_user')) {
+  window.location.href = 'index.html';
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.classList.toggle('show', !!msg);
+}
+
+function handleEnter() {
+  const username = document.getElementById('username').value.trim();
+  if (!username) { showError('Введи имя игрока'); return; }
+  if (username.length < 2) { showError('Имя: минимум 2 символа'); return; }
+  if (!/^[a-zA-Zа-яА-ЯёЁ0-9_]+$/.test(username)) {
+    showError('Только буквы, цифры и _'); return;
+  }
+  login(username);
+}
+
+function login(username) {
+  // Если у этого пользователя нет баланса — ставим 1000 (новый аккаунт)
+  const balKey = `gs_${username}_bal`;
+  if (!localStorage.getItem(balKey)) {
+    localStorage.setItem(balKey, 1000);
+  }
+  localStorage.setItem('gs_user', username);
+
+  // Сохраняем в список аккаунтов
+  const accounts = JSON.parse(localStorage.getItem('gs_accounts') || '[]');
+  if (!accounts.includes(username)) {
+    accounts.push(username);
+    localStorage.setItem('gs_accounts', JSON.stringify(accounts));
+  }
+
+  window.location.href = 'index.html';
+}
+
+// Показать сохранённые аккаунты
+function renderAccounts() {
+  const accounts = JSON.parse(localStorage.getItem('gs_accounts') || '[]');
+  if (accounts.length === 0) return;
+  document.getElementById('accounts-section').style.display = 'block';
+  const list = document.getElementById('accounts-list');
+  list.innerHTML = '';
+  accounts.forEach(name => {
+    const bal = localStorage.getItem(`gs_${name}_bal`) || 1000;
+    const div = document.createElement('div');
+    div.className = 'account-chip';
+    div.innerHTML = `<span class="account-name">👤 ${name}</span><span class="account-bal">${bal} 🪙</span>`;
+    div.onclick = () => login(name);
+    list.appendChild(div);
+  });
+}
+
+// Enter для отправки
+document.getElementById('username').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleEnter();
+});
+
+renderAccounts();
+</script>
+</body>
+</html>

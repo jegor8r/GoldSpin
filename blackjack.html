@@ -299,3 +299,6 @@ document.getElementById('bet-plus').addEventListener('click',()=>{if(!inGame){be
 document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{if(!inGame){const b=parseInt(c.dataset.bet);if(b<=getBal()){bet=b;updateUI();}}}));
 
 GS.initPage().then(updateUI);
+</script>
+</body>
+</html>
