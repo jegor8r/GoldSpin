@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Слоты — GoldSpin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+<script src="gs-auth.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#1a4a2e 0%,#0d2818 40%,#060f0a 100%);font-family:'Oswald',sans-serif;color:#f5d060}
+.nav{position:sticky;top:0;z-index:100;background:rgba(6,15,10,.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(212,175,55,.2);height:62px;display:flex;align-items:center;padding:0 32px;gap:4px}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#f5d060;text-decoration:none;letter-spacing:4px;text-shadow:0 0 20px rgba(245,208,96,.5);margin-right:auto}
+.nav a{color:#7a6030;text-decoration:none;font-size:13px;letter-spacing:1px;padding:6px 12px;border-radius:6px;transition:all .2s}
+.nav a:hover,.nav a.active{color:#f5d060;background:rgba(212,175,55,.08)}
+.nav-bal{font-family:'Bebas Neue',sans-serif;font-size:20px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:4px 16px;margin-left:8px}
+.page{max-width:560px;margin:0 auto;padding:40px 24px}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:6px;text-align:center;text-shadow:0 0 30px rgba(245,208,96,.3);margin-bottom:32px}
+.machine{background:linear-gradient(160deg,#2a1a00,#1a1000);border:3px solid #7a5a10;border-radius:24px;padding:28px;box-shadow:0 0 0 1px #c8980a,0 0 40px rgba(0,0,0,.8),inset 0 1px 0 rgba(212,175,55,.2)}
+.paytable{display:flex;justify-content:center;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.pay-item{background:rgba(0,0,0,.4);border:1px solid rgba(212,175,55,.2);border-radius:6px;padding:4px 8px;font-size:11px;color:#c8a84a;white-space:nowrap}
+.pay-item span{color:#f5d060;font-weight:600}
+.reels-wrap{background:#0a0a0a;border-radius:14px;padding:14px;border:2px solid #5a3e08;box-shadow:inset 0 4px 20px rgba(0,0,0,.8);position:relative;margin-bottom:20px}
+.win-line{position:absolute;left:14px;right:14px;top:50%;transform:translateY(-50%);height:2px;background:rgba(245,208,96,.2);border-radius:1px;pointer-events:none;z-index:10;transition:background .3s}
+.win-line.active{background:rgba(245,208,96,.8);box-shadow:0 0 8px rgba(245,208,96,.6)}
+.reels{display:flex;gap:10px;justify-content:center}
+.reel{width:110px;height:110px;overflow:hidden;border-radius:8px;border:1px solid #3a2a04;background:#111}
+.reel-inner{display:flex;flex-direction:column;will-change:transform}
+.symbol{width:110px;height:110px;display:flex;align-items:center;justify-content:center;font-size:56px;flex-shrink:0;user-select:none}
+.result-banner{min-height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:#f5d060;margin-bottom:20px;transition:all .3s;text-shadow:0 0 10px rgba(245,208,96,.4)}
+.result-banner.win{background:rgba(245,208,96,.12);border:1px solid rgba(245,208,96,.3);animation:pb .6s ease-in-out 3}
+.result-banner.lose{background:rgba(180,40,40,.08);border:1px solid rgba(180,40,40,.15);color:#c06060;text-shadow:none}
+@keyframes pb{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+.stats{display:flex;gap:10px;margin-bottom:20px}
+.stat-box{flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:10px 14px;text-align:center}
+.stat-label{font-size:11px;color:#7a6030;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.stat-value{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#f5d060;line-height:1;text-shadow:0 0 8px rgba(245,208,96,.3)}
+.bet-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.bet-label{font-size:13px;color:#7a6030;letter-spacing:1px;min-width:40px}
+.bet-btn{width:36px;height:36px;border-radius:50%;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);color:#c8a84a;font-size:20px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.bet-btn:hover{background:rgba(212,175,55,.2);color:#f5d060}
+.bet-amount{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#f5d060;min-width:50px;text-align:center}
+.bet-chips{display:flex;gap:6px;margin-left:auto}
+.chip{width:36px;height:36px;border-radius:50%;border:2px dashed;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.chip:hover{transform:translateY(-2px) scale(1.08)}
+.chip-1{background:#1a1a1a;border-color:#888;color:#aaa}
+.chip-5{background:#1e0000;border-color:#c04040;color:#e06060}
+.chip-10{background:#001a0a;border-color:#30a060;color:#50e090}
+.chip-25{background:#0a0020;border-color:#6040c0;color:#9060e0}
+.chip-50{background:#1a1000;border-color:#c09030;color:#f0c040}
+.spin-btn{width:100%;height:58px;border-radius:12px;background:linear-gradient(160deg,#c8940a,#8a6408);border:none;color:#0d0800;font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:5px;cursor:pointer;transition:all .15s;box-shadow:0 4px 0 #5a3e00,0 6px 20px rgba(0,0,0,.5)}
+.spin-btn:hover{background:linear-gradient(160deg,#e0a80c,#a07a0a);transform:translateY(-1px)}
+.spin-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #5a3e00}
+.spin-btn:disabled{background:linear-gradient(160deg,#4a3a10,#2a2008);color:#5a4a20;cursor:not-allowed;transform:none;box-shadow:0 2px 0 #1a1000}
+@keyframes coin-fall{0%{opacity:1;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(120px) rotate(720deg)}}
+.coin{position:absolute;font-size:20px;pointer-events:none;animation:coin-fall 1s ease-in forwards;z-index:100}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="nav-logo">◈ GOLDSPIN</a>
+  <a href="index.html">Лобби</a>
+  <a href="slots.html" class="active">🎰 Слоты</a>
+  <a href="roulette.html">🎡 Рулетка</a>
+  <a href="blackjack.html">🃏 Блэкджек</a>
+  <a href="dice.html">🎲 Кости</a>
+  <div class="nav-bal">💰 <span id="nav-bal">—</span></div>
+</nav>
+<div class="page">
+  <div class="page-title">🎰 СЛОТЫ</div>
+  <div class="machine">
+    <div class="paytable">
+      <div class="pay-item">7️⃣7️⃣7️⃣=<span>×50</span></div>
+      <div class="pay-item">💎💎💎=<span>×25</span></div>
+      <div class="pay-item">🔔🔔🔔=<span>×15</span></div>
+      <div class="pay-item">🍇🍇🍇=<span>×10</span></div>
+      <div class="pay-item">🍊🍊🍊=<span>×7</span></div>
+      <div class="pay-item">🍋🍋🍋=<span>×5</span></div>
+      <div class="pay-item">🍒🍒🍒=<span>×3</span></div>
+      <div class="pay-item">🍒🍒=<span>×1.5</span></div>
+    </div>
+    <div class="reels-wrap" id="reels-wrap">
+      <div class="win-line" id="win-line"></div>
+      <div class="reels">
+        <div class="reel"><div class="reel-inner" id="reel-0"></div></div>
+        <div class="reel"><div class="reel-inner" id="reel-1"></div></div>
+        <div class="reel"><div class="reel-inner" id="reel-2"></div></div>
+      </div>
+    </div>
+    <div class="result-banner" id="result-banner">НАЖМИ КРУТИТЬ</div>
+    <div class="stats">
+      <div class="stat-box"><div class="stat-label">Баланс</div><div class="stat-value" id="balance">—</div></div>
+      <div class="stat-box"><div class="stat-label">Выигрыш</div><div class="stat-value" id="last-win">—</div></div>
+      <div class="stat-box"><div class="stat-label">Спинов</div><div class="stat-value" id="spins-el">0</div></div>
+    </div>
+    <div class="bet-row">
+      <div class="bet-label">СТАВКА</div>
+      <button class="bet-btn" id="bet-minus">−</button>
+      <div class="bet-amount" id="bet-display">10</div>
+      <button class="bet-btn" id="bet-plus">+</button>
+      <div class="bet-chips">
+        <div class="chip chip-1" data-bet="1">1</div>
+        <div class="chip chip-5" data-bet="5">5</div>
+        <div class="chip chip-10" data-bet="10">10</div>
+        <div class="chip chip-25" data-bet="25">25</div>
+        <div class="chip chip-50" data-bet="50">50</div>
+      </div>
+    </div>
+    <button class="spin-btn" id="spin-btn">КРУТИТЬ</button>
+  </div>
+</div>
+<script>
+const SYMBOLS=['🍒','🍋','🍊','🍇','🔔','💎','7️⃣'];
+const WEIGHTS=[30,22,18,12,9,6,3];
+const PAYOUTS={'7️⃣7️⃣7️⃣':50,'💎💎💎':25,'🔔🔔🔔':15,'🍇🍇🍇':10,'🍊🍊🍊':7,'🍋🍋🍋':5,'🍒🍒🍒':3};
+const STRIP=30,H=110;
+const pool=[];
+SYMBOLS.forEach((s,i)=>{for(let w=0;w<WEIGHTS[i];w++)pool.push(s);});
+function rndSym(){return pool[Math.floor(Math.random()*pool.length)];}
+const reelInners=[0,1,2].map(i=>document.getElementById(`reel-${i}`));
+const strips=[[],[],[]];
+reelInners.forEach((inner,ri)=>{
+  for(let s=0;s<STRIP;s++){const sym=rndSym();strips[ri].push(sym);const d=document.createElement('div');d.className='symbol';d.textContent=sym;inner.appendChild(d);}
+  inner.style.transform='translateY(0px)';
+});
+const curIdx=[0,0,0];
+function setReel(ri,idx){idx=((idx%STRIP)+STRIP)%STRIP;reelInners[ri].style.transform=`translateY(${-idx*H}px)`;curIdx[ri]=idx;}
+reelInners.forEach((_,ri)=>setReel(ri,0));
+// storage
+function getBal(){return parseInt(localStorage.getItem('gs_bal')||1000);}
+function setBal(v){localStorage.setItem('gs_bal',v);}
+function getStat(k){return parseInt(localStorage.getItem(k)||0);}
+function setStat(k,v){localStorage.setItem(k,v);}
+let bet=10,spinning=false;
+const balEl=document.getElementById('balance'),lwEl=document.getElementById('last-win'),spEl=document.getElementById('spins-el'),betEl=document.getElementById('bet-display'),banner=document.getElementById('result-banner'),spinBtn=document.getElementById('spin-btn'),winLine=document.getElementById('win-line');
+function updateUI(){const b=getBal();balEl.textContent=b;document.getElementById('nav-bal').textContent=b;spEl.textContent=getStat('gs_spins');betEl.textContent=bet;spinBtn.disabled=spinning||b<bet;}
+document.getElementById('bet-minus').addEventListener('click',()=>{if(!spinning){bet=Math.max(1,bet-1);updateUI();}});
+document.getElementById('bet-plus').addEventListener('click',()=>{if(!spinning){bet=Math.min(getBal(),bet+1);updateUI();}});
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{if(!spinning){const b=parseInt(c.dataset.bet);if(b<=getBal()){bet=b;updateUI();}}}));
+function spinReel(ri,targetIdx,duration,delay){
+  return new Promise(resolve=>{
+    const start=performance.now()+delay;
+    const extra=(3+ri)*STRIP;
+    const from=curIdx[ri];
+    const rawT=from+extra+((targetIdx-from+STRIP)%STRIP);
+    function easeOut(t){return 1-Math.pow(1-t,3);}
+    function tick(now){
+      if(now<start){requestAnimationFrame(tick);return;}
+      const t=Math.min((now-start)/duration,1);
+      const cur=from+(rawT-from)*easeOut(t);
+      reelInners[ri].style.transform=`translateY(${-(cur%STRIP)*H}px)`;
+      if(t<1)requestAnimationFrame(tick);
+      else{curIdx[ri]=targetIdx;reelInners[ri].style.transform=`translateY(${-targetIdx*H}px)`;resolve();}
+    }
+    requestAnimationFrame(tick);
+  });
+}
+function showCoins(n){const w=document.getElementById('reels-wrap');for(let i=0;i<n;i++)setTimeout(()=>{const c=document.createElement('div');c.className='coin';c.textContent='🪙';c.style.left=(20+Math.random()*60)+'%';c.style.top='10%';c.style.animationDelay=(Math.random()*.3)+'s';w.appendChild(c);setTimeout(()=>c.remove(),1200);},i*60);}
+function checkWin(r){const key=r.join('');if(PAYOUTS[key])return{mult:PAYOUTS[key]};if(r[0]==='🍒'&&r[1]==='🍒'&&r[2]!=='🍒')return{mult:1.5};return null;}
+async function doSpin(){
+  if(spinning||getBal()<bet)return;
+  spinning=true;
+  const bal=getBal()-bet;setBal(bal);
+  const sp=getStat('gs_spins')+1;setStat('gs_spins',sp);
+  updateUI();
+  winLine.classList.remove('active');
+  banner.className='result-banner';banner.textContent='...';
+  const targets=[0,1,2].map(()=>Math.floor(Math.random()*STRIP));
+  await Promise.all([0,1,2].map(ri=>spinReel(ri,targets[ri],[900,1100,1350][ri],[0,150,300][ri])));
+  const res=[0,1,2].map(ri=>strips[ri][targets[ri]]);
+  const win=checkWin(res);
+  if(win){
+    const prize=Math.round(bet*win.mult);
+    const newBal=getBal()+prize;setBal(newBal);
+    setStat('gs_wins',getStat('gs_wins')+1);
+    if(prize>getStat('gs_best'))setStat('gs_best',prize);
+    lwEl.textContent='+'+prize;
+    winLine.classList.add('active');
+    banner.className='result-banner win';
+    if(win.mult>=25){banner.textContent='🎰 ДЖЕКПОТ! +'+prize;showCoins(20);}
+    else if(win.mult>=10){banner.textContent='🎉 БОЛЬШОЙ! +'+prize;showCoins(12);}
+    else{banner.textContent='✨ ВЫИГРЫШ! +'+prize;showCoins(6);}
+  }else{lwEl.textContent='0';banner.className='result-banner lose';banner.textContent='Не повезло... Попробуй ещё!';}
+  if(getBal()===0){setTimeout(()=>{setBal(500);updateUI();banner.textContent='Подарок: +500 монет 🎁';},1500);}
+  spinning=false;updateUI();GS.syncToServer();
+}
+spinBtn.addEventListener('click',doSpin);
+document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();doSpin();}});
+GS.initPage().then(updateUI);

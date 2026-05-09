@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Блэкджек — GoldSpin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+<script src="gs-auth.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#1a4a2e 0%,#0d2818 40%,#060f0a 100%);font-family:'Oswald',sans-serif;color:#f5d060}
+.nav{position:sticky;top:0;z-index:100;background:rgba(6,15,10,.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(212,175,55,.2);height:62px;display:flex;align-items:center;padding:0 32px;gap:4px}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#f5d060;text-decoration:none;letter-spacing:4px;text-shadow:0 0 20px rgba(245,208,96,.5);margin-right:auto}
+.nav a{color:#7a6030;text-decoration:none;font-size:13px;letter-spacing:1px;padding:6px 12px;border-radius:6px;transition:all .2s}
+.nav a:hover,.nav a.active{color:#f5d060;background:rgba(212,175,55,.08)}
+.nav-bal{font-family:'Bebas Neue',sans-serif;font-size:20px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:4px 16px;margin-left:8px}
+.page{max-width:640px;margin:0 auto;padding:40px 24px}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:6px;text-align:center;text-shadow:0 0 30px rgba(245,208,96,.3);margin-bottom:32px}
+
+/* TABLE */
+.table{background:radial-gradient(ellipse at 50% 50%,#0d3a1e,#071a0d);border:3px solid #3a6a28;border-radius:24px;padding:32px 28px;box-shadow:0 0 0 1px #5a9a40,0 0 60px rgba(0,0,0,.8),inset 0 0 60px rgba(0,0,0,.4);position:relative;margin-bottom:20px}
+
+/* CARDS */
+.hand-label{font-size:12px;color:#5a9a40;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.hand{display:flex;gap:8px;min-height:110px;margin-bottom:8px;flex-wrap:wrap}
+.card{width:72px;height:100px;border-radius:8px;background:#fff;border:1px solid #ddd;display:flex;flex-direction:column;justify-content:space-between;padding:5px 6px;font-size:22px;font-weight:700;cursor:default;box-shadow:2px 3px 8px rgba(0,0,0,.6);animation:cardIn .3s ease;flex-shrink:0;user-select:none}
+.card.back{background:repeating-linear-gradient(135deg,#1a3a8a 0px,#1a3a8a 4px,#0d2060 4px,#0d2060 8px);border:2px solid #2a4ab0}
+.card.back::before{content:'🂠';font-size:48px;text-align:center;display:block;margin-top:20px;filter:opacity(.5)}
+@keyframes cardIn{from{transform:translateY(-20px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+.rank-top{font-size:16px;line-height:1}
+.suit-center{font-size:26px;text-align:center;line-height:1}
+.rank-bot{font-size:16px;line-height:1;transform:rotate(180deg);align-self:flex-end}
+.red-suit{color:#cc2222}
+.black-suit{color:#111}
+.hand-score{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#f5d060;margin-bottom:20px;min-height:24px}
+.bust{color:#e05050}
+
+/* DIVIDER */
+.divider{border:none;border-top:1px dashed rgba(90,154,64,.2);margin:12px 0 20px}
+
+/* RESULT */
+.result-banner{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:4px;text-align:center;min-height:40px;padding:8px;border-radius:10px;margin-bottom:20px;transition:all .3s}
+.result-banner.win{color:#f5d060;background:rgba(245,208,96,.1);border:1px solid rgba(245,208,96,.3);animation:pb .5s ease 3}
+.result-banner.lose{color:#e05050;background:rgba(180,40,40,.08);border:1px solid rgba(180,40,40,.2)}
+.result-banner.push{color:#aaa;background:rgba(100,100,100,.08);border:1px solid rgba(100,100,100,.15)}
+@keyframes pb{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+
+/* BET + ACTIONS */
+.bet-section{background:rgba(0,0,0,.3);border-radius:14px;padding:16px 20px;margin-bottom:14px;border:1px solid rgba(212,175,55,.1)}
+.bet-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bet-label{font-size:13px;color:#7a6030;letter-spacing:1px;min-width:40px}
+.bet-btn{width:32px;height:32px;border-radius:50%;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);color:#c8a84a;font-size:18px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.bet-btn:hover{background:rgba(212,175,55,.2)}
+.bet-amount{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f5d060;min-width:44px;text-align:center}
+.bet-chips{display:flex;gap:5px;margin-left:auto}
+.chip{width:34px;height:34px;border-radius:50%;border:2px dashed;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.chip:hover{transform:translateY(-2px) scale(1.1)}
+.chip-1{background:#1a1a1a;border-color:#888;color:#aaa}
+.chip-5{background:#1e0000;border-color:#c04040;color:#e06060}
+.chip-10{background:#001a0a;border-color:#30a060;color:#50e090}
+.chip-25{background:#0a0020;border-color:#6040c0;color:#9060e0}
+.chip-50{background:#1a1000;border-color:#c09030;color:#f0c040}
+.actions{display:flex;gap:8px}
+.action-btn{flex:1;height:48px;border-radius:10px;border:none;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;transition:all .15s}
+.action-btn:disabled{opacity:.3;cursor:not-allowed}
+.btn-deal{background:linear-gradient(160deg,#c8940a,#8a6408);color:#0d0800;box-shadow:0 3px 0 #5a3e00}
+.btn-deal:hover:not(:disabled){background:linear-gradient(160deg,#e0a80c,#a07a0a);transform:translateY(-1px)}
+.btn-hit{background:linear-gradient(160deg,#1a6b35,#0d3a1e);color:#80ffaa;border:1px solid #30a060}
+.btn-hit:hover:not(:disabled){background:linear-gradient(160deg,#22a050,#145a28);transform:translateY(-1px)}
+.btn-stand{background:linear-gradient(160deg,#6b1a1a,#3a0d0d);color:#ffaaaa;border:1px solid #c04040}
+.btn-stand:hover:not(:disabled){background:linear-gradient(160deg,#a02222,#5a1414);transform:translateY(-1px)}
+.btn-double{background:linear-gradient(160deg,#1a3a8a,#0d2060);color:#aaccff;border:1px solid #3060c0;font-size:16px}
+.btn-double:hover:not(:disabled){background:linear-gradient(160deg,#2255b0,#143080);transform:translateY(-1px)}
+
+.stats-row{display:flex;gap:10px}
+.stat-box{flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(212,175,55,.15);border-radius:10px;padding:10px;text-align:center}
+.stat-label{font-size:11px;color:#7a6030;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.stat-value{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f5d060;line-height:1}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="nav-logo">◈ GOLDSPIN</a>
+  <a href="index.html">Лобби</a>
+  <a href="slots.html">🎰 Слоты</a>
+  <a href="roulette.html">🎡 Рулетка</a>
+  <a href="blackjack.html" class="active">🃏 Блэкджек</a>
+  <a href="dice.html">🎲 Кости</a>
+  <div class="nav-bal">💰 <span id="nav-bal">—</span></div>
+</nav>
+<div class="page">
+  <div class="page-title">🃏 БЛЭКДЖЕК</div>
+
+  <div class="table">
+    <div class="hand-label">Дилер <span id="dealer-score-label"></span></div>
+    <div class="hand" id="dealer-hand"></div>
+    <div class="hand-score" id="dealer-score"></div>
+    <hr class="divider">
+    <div class="hand-label">Ваши карты</div>
+    <div class="hand" id="player-hand"></div>
+    <div class="hand-score" id="player-score"></div>
+    <div class="result-banner" id="result-banner">Сделай ставку и раздай карты</div>
+  </div>
+
+  <div class="bet-section">
+    <div class="bet-row">
+      <div class="bet-label">СТАВКА</div>
+      <button class="bet-btn" id="bet-minus">−</button>
+      <div class="bet-amount" id="bet-display">10</div>
+      <button class="bet-btn" id="bet-plus">+</button>
+      <div class="bet-chips">
+        <div class="chip chip-1" data-bet="1">1</div>
+        <div class="chip chip-5" data-bet="5">5</div>
+        <div class="chip chip-10" data-bet="10">10</div>
+        <div class="chip chip-25" data-bet="25">25</div>
+        <div class="chip chip-50" data-bet="50">50</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="action-btn btn-deal" id="btn-deal">РАЗДАТЬ</button>
+      <button class="action-btn btn-hit" id="btn-hit" disabled>ЕЩЁ</button>
+      <button class="action-btn btn-stand" id="btn-stand" disabled>СТОП</button>
+      <button class="action-btn btn-double" id="btn-double" disabled>ДАБЛ</button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-label">Баланс</div><div class="stat-value" id="bal-el">—</div></div>
+    <div class="stat-box"><div class="stat-label">Выигрыш</div><div class="stat-value" id="last-el">—</div></div>
+    <div class="stat-box"><div class="stat-label">Раундов</div><div class="stat-value" id="rounds-el">0</div></div>
+  </div>
+</div>
+
+<script>
+const SUITS=['♠','♥','♦','♣'];
+const RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const RED_SUITS=new Set(['♥','♦']);
+
+function makeDeck(){
+  const d=[];
+  SUITS.forEach(s=>RANKS.forEach(r=>d.push({r,s})));
+  // 6 decks
+  let deck=[];for(let i=0;i<6;i++)deck=[...deck,...d];
+  for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+  return deck;
+}
+
+function cardVal(r){if(r==='A')return 11;if(['J','Q','K'].includes(r))return 10;return parseInt(r);}
+function handVal(hand){
+  let s=hand.reduce((a,c)=>a+cardVal(c.r),0);
+  let aces=hand.filter(c=>c.r==='A').length;
+  while(s>21&&aces>0){s-=10;aces--;}
+  return s;
+}
+
+function renderCard(c,faceDown=false){
+  const div=document.createElement('div');
+  if(faceDown){div.className='card back';return div;}
+  div.className='card';
+  const isRed=RED_SUITS.has(c.s);
+  const cl=isRed?'red-suit':'black-suit';
+  div.innerHTML=`<span class="rank-top ${cl}">${c.r}${c.s}</span><span class="suit-center ${cl}">${c.s}</span><span class="rank-bot ${cl}">${c.r}${c.s}</span>`;
+  return div;
+}
+
+function renderHand(id,hand,hideSecond=false){
+  const el=document.getElementById(id);el.innerHTML='';
+  hand.forEach((c,i)=>{
+    el.appendChild(renderCard(c,hideSecond&&i===1));
+  });
+}
+
+function scoreStr(hand,hide=false){
+  if(hide)return'?';
+  const v=handVal(hand);
+  if(v>21)return`<span class="bust">${v} ПЕРЕБОР!</span>`;
+  if(v===21&&hand.length===2)return`21 🎉 БЛЭКДЖЕК!`;
+  return v;
+}
+
+// Storage
+function getBal(){return parseInt(localStorage.getItem('gs_bal')||1000);}
+function setBal(v){localStorage.setItem('gs_bal',v);}
+function getStat(k){return parseInt(localStorage.getItem(k)||0);}
+function setStat(k,v){localStorage.setItem(k,v);}
+
+let deck=[],player=[],dealer=[],bet=10,inGame=false,doubled=false,rounds=0;
+
+function updateUI(){
+  const b=getBal();
+  document.getElementById('bal-el').textContent=b;
+  document.getElementById('nav-bal').textContent=b;
+  document.getElementById('rounds-el').textContent=rounds;
+  document.getElementById('bet-display').textContent=bet;
+  const canDeal=!inGame&&b>=bet;
+  document.getElementById('btn-deal').disabled=!canDeal;
+  document.getElementById('btn-hit').disabled=!inGame;
+  document.getElementById('btn-stand').disabled=!inGame;
+  document.getElementById('btn-double').disabled=!inGame||doubled||getBal()<bet;
+  if(!inGame){
+    document.getElementById('bet-minus').disabled=false;
+    document.getElementById('bet-plus').disabled=false;
+    document.querySelectorAll('.chip').forEach(c=>c.disabled=false);
+  }
+}
+
+function draw(){if(deck.length<20)deck=makeDeck();return deck.pop();}
+
+function deal(){
+  if(inGame||getBal()<bet)return;
+  setBal(getBal()-bet);
+  inGame=true;doubled=false;
+  deck=makeDeck();
+  player=[draw(),draw()];
+  dealer=[draw(),draw()];
+  renderHand('dealer-hand',dealer,true);
+  renderHand('player-hand',player);
+  document.getElementById('dealer-score').innerHTML=scoreStr(dealer,true);
+  document.getElementById('player-score').innerHTML=scoreStr(player);
+  document.getElementById('result-banner').className='result-banner';
+  document.getElementById('result-banner').textContent='';
+  setStat('gs_spins',getStat('gs_spins')+1);rounds++;
+  updateUI();
+  // check natural blackjack
+  if(handVal(player)===21){setTimeout(stand,500);}
+}
+
+function hit(){
+  if(!inGame)return;
+  player.push(draw());
+  renderHand('player-hand',player);
+  document.getElementById('player-score').innerHTML=scoreStr(player);
+  if(handVal(player)>21){endGame();}
+  updateUI();
+}
+
+function stand(){
+  if(!inGame)return;
+  // reveal dealer card
+  renderHand('dealer-hand',dealer,false);
+  document.getElementById('dealer-score').innerHTML=scoreStr(dealer);
+  // dealer draws until 17
+  function dealerDraw(){
+    if(handVal(dealer)<17){
+      setTimeout(()=>{
+        dealer.push(draw());
+        renderHand('dealer-hand',dealer,false);
+        document.getElementById('dealer-score').innerHTML=scoreStr(dealer);
+        dealerDraw();
+      },400);
+    }else{endGame();}
+  }
+  dealerDraw();
+}
+
+function doubleDown(){
+  if(!inGame||doubled)return;
+  setBal(getBal()-bet);
+  bet*=2;doubled=true;
+  player.push(draw());
+  renderHand('player-hand',player);
+  document.getElementById('player-score').innerHTML=scoreStr(player);
+  updateUI();
+  if(handVal(player)>21)endGame();
+  else setTimeout(stand,400);
+}
+
+function endGame(){
+  inGame=false;
+  const pv=handVal(player),dv=handVal(dealer);
+  const pBJ=pv===21&&player.length===2;
+  const dBJ=dv===21&&dealer.length===2;
+  renderHand('dealer-hand',dealer,false);
+  document.getElementById('dealer-score').innerHTML=scoreStr(dealer);
+  const banner=document.getElementById('result-banner');
+  let msg='',cls='',prize=0;
+  if(pv>21){msg='ПЕРЕБОР! ПРОИГРЫШ 💸';cls='lose';}
+  else if(dv>21){prize=bet*2;msg=`ДИЛЕР ПЕРЕБРАЛ! +${prize} 🎉`;cls='win';}
+  else if(pBJ&&!dBJ){prize=Math.round(bet*2.5);msg=`БЛЭКДЖЕК! +${prize} 🃏✨`;cls='win';}
+  else if(pv>dv){prize=bet*2;msg=`ПОБЕДА! +${prize} 🎉`;cls='win';}
+  else if(pv===dv){prize=doubled?bet:bet/2*2;prize=Math.round(bet);msg=`НИЧЬЯ! +${prize} 🤝`;cls='push';}
+  else{msg='ДИЛЕР ПОБЕДИЛ 😔';cls='lose';}
+  if(prize>0){setBal(getBal()+prize);}
+  if(cls==='win'){setStat('gs_wins',getStat('gs_wins')+1);if(prize>getStat('gs_best'))setStat('gs_best',prize);}
+  banner.className='result-banner '+cls;
+  banner.textContent=msg;
+  document.getElementById('last-el').textContent=cls==='win'?'+'+prize:cls==='push'?'±0':'−'+bet;
+  if(doubled)bet=Math.round(bet/2);
+  if(getBal()===0){setBal(500);}
+  updateUI();GS.syncToServer();
+}
+
+document.getElementById('btn-deal').addEventListener('click',deal);
+document.getElementById('btn-hit').addEventListener('click',hit);
+document.getElementById('btn-stand').addEventListener('click',stand);
+document.getElementById('btn-double').addEventListener('click',doubleDown);
+document.getElementById('bet-minus').addEventListener('click',()=>{if(!inGame){bet=Math.max(1,bet-1);updateUI();}});
+document.getElementById('bet-plus').addEventListener('click',()=>{if(!inGame){bet=Math.min(getBal(),bet+1);updateUI();}});
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{if(!inGame){const b=parseInt(c.dataset.bet);if(b<=getBal()){bet=b;updateUI();}}}));
+
+GS.initPage().then(updateUI);

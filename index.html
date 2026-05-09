@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoldSpin Casino</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+<script src="gs-auth.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#1a4a2e 0%,#0d2818 40%,#060f0a 100%);font-family:'Oswald',sans-serif;color:#f5d060}
+.nav{position:sticky;top:0;z-index:100;background:rgba(6,15,10,.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(212,175,55,.2);height:62px;display:flex;align-items:center;padding:0 32px;gap:4px}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#f5d060;text-decoration:none;letter-spacing:4px;text-shadow:0 0 20px rgba(245,208,96,.5);margin-right:auto}
+.nav a{color:#7a6030;text-decoration:none;font-size:13px;letter-spacing:1px;padding:6px 12px;border-radius:6px;transition:all .2s}
+.nav a:hover,.nav a.active{color:#f5d060;background:rgba(212,175,55,.08)}
+.nav-bal{font-family:'Bebas Neue',sans-serif;font-size:20px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:4px 16px;margin-left:8px;white-space:nowrap}
+
+.hero{text-align:center;padding:72px 24px 52px}
+.hero-logo{font-family:'Bebas Neue',sans-serif;font-size:108px;letter-spacing:14px;line-height:1;color:#f5d060;text-shadow:0 0 60px rgba(245,208,96,.3),3px 3px 0 #8b6914,6px 6px 0 #3a2800}
+.hero-sub{font-size:15px;letter-spacing:6px;color:#7a6030;margin-top:6px;text-transform:uppercase}
+.hero-stars{margin-top:16px;display:flex;justify-content:center;gap:10px}
+.hero-stars span{width:8px;height:8px;background:#c8940a;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:twk 1.6s ease-in-out infinite}
+.hero-stars span:nth-child(2){animation-delay:.3s}.hero-stars span:nth-child(3){animation-delay:.6s}.hero-stars span:nth-child(4){animation-delay:.9s}.hero-stars span:nth-child(5){animation-delay:1.2s}
+@keyframes twk{0%,100%{opacity:1}50%{opacity:.2}}
+
+.ticker-wrap{background:rgba(0,0,0,.35);border-top:1px solid rgba(212,175,55,.1);border-bottom:1px solid rgba(212,175,55,.1);height:38px;display:flex;align-items:center;overflow:hidden;margin-top:8px}
+.ticker{display:flex;gap:60px;animation:tick 28s linear infinite;white-space:nowrap;padding-left:100%;font-size:13px;color:#7a6030}
+.ticker strong{color:#f5d060}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+.section{max-width:980px;margin:0 auto;padding:48px 24px 24px}
+
+.bal-card{background:linear-gradient(135deg,rgba(42,26,0,.8),rgba(18,10,0,.8));border:1px solid rgba(212,175,55,.2);border-radius:18px;padding:28px 32px;display:flex;align-items:center;gap:32px;margin-bottom:48px;position:relative;overflow:hidden}
+.bal-card::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(212,175,55,.08),transparent 70%)}
+.bal-main .bal-lbl{font-size:11px;color:#7a6030;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.bal-main .bal-val{font-family:'Bebas Neue',sans-serif;font-size:62px;line-height:1;color:#f5d060;text-shadow:0 0 20px rgba(245,208,96,.3)}
+.bal-sub{font-size:13px;color:#5a4020;margin-top:4px}
+.bal-acts{margin-left:auto;display:flex;flex-direction:column;gap:10px}
+.btn-g{background:linear-gradient(160deg,#c8940a,#8a6408);border:none;color:#0d0800;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;padding:12px 28px;border-radius:10px;cursor:pointer;box-shadow:0 3px 0 #4a3000;transition:all .15s}
+.btn-g:hover{background:linear-gradient(160deg,#e0a80c,#a07a0a);transform:translateY(-1px)}
+.btn-g:active{transform:translateY(2px);box-shadow:0 1px 0 #4a3000}
+.btn-o{background:transparent;border:1px solid rgba(212,175,55,.25);color:#c8a84a;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;padding:12px 28px;border-radius:10px;cursor:pointer;transition:all .15s}
+.btn-o:hover{border-color:rgba(212,175,55,.5);color:#f5d060}
+
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:5px;color:#f5d060;margin-bottom:20px;display:flex;align-items:center;gap:16px}
+.sec-title::after{content:'';flex:1;height:1px;background:rgba(212,175,55,.12)}
+
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+.gc{display:block;text-decoration:none;background:rgba(20,12,0,.7);border:1px solid rgba(212,175,55,.12);border-radius:18px;padding:32px 20px 24px;text-align:center;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.gc::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(212,175,55,.07),transparent 65%);opacity:0;transition:opacity .3s}
+.gc:hover{border-color:rgba(212,175,55,.35);transform:translateY(-5px);box-shadow:0 16px 48px rgba(0,0,0,.6)}
+.gc:hover::after{opacity:1}
+.gc-badge{position:absolute;top:14px;right:14px;background:rgba(200,148,10,.2);border:1px solid rgba(200,148,10,.4);border-radius:5px;padding:2px 9px;font-size:11px;color:#f5d060;letter-spacing:1px}
+.gc-icon{font-size:64px;display:block;margin-bottom:18px}
+.gc-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:#f5d060;margin-bottom:8px}
+.gc-desc{font-size:13px;color:#6a5028;line-height:1.6}
+.gc-rtp{margin-top:14px;font-size:11px;color:#4a3818;letter-spacing:1px}
+.gc-rtp span{color:#c8940a}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:48px;margin-bottom:48px}
+.stat-box{background:rgba(16,10,0,.6);border:1px solid rgba(212,175,55,.1);border-radius:12px;padding:20px;text-align:center}
+.stat-v{font-family:'Bebas Neue',sans-serif;font-size:38px;color:#f5d060;text-shadow:0 0 10px rgba(245,208,96,.2)}
+.stat-l{font-size:11px;color:#5a4020;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+
+footer{text-align:center;padding:32px;border-top:1px solid rgba(212,175,55,.08);font-size:12px;color:#2a1e0a;letter-spacing:1px;margin-top:32px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">◈ GOLDSPIN</a>
+  <a href="index.html" class="active">Лобби</a>
+  <a href="slots.html">🎰 Слоты</a>
+  <a href="roulette.html">🎡 Рулетка</a>
+  <a href="blackjack.html">🃏 Блэкджек</a>
+  <a href="dice.html">🎲 Кости</a>
+  <div class="nav-bal">💰 <span id="nav-bal">—</span></div>
+</nav>
+
+<div class="hero">
+  <div class="hero-logo">GOLDSPIN</div>
+  <div class="hero-sub">Твоё персональное казино</div>
+  <div class="hero-stars"><span></span><span></span><span></span><span></span><span></span></div>
+</div>
+
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker"></div>
+</div>
+
+<div class="section">
+  <div class="bal-card">
+    <div class="bal-main">
+      <div class="bal-lbl">Ваш баланс</div>
+      <div class="bal-val"><span id="bal-big">—</span> 🪙</div>
+      <div class="bal-sub">Кончились монеты? Пополни баланс →</div>
+    </div>
+    <div class="bal-acts">
+      <button class="btn-g" onclick="addBal(500)">＋ 500 монет</button>
+      <button class="btn-g" onclick="addBal(1000)">＋ 1000 монет</button>
+      <button class="btn-o" onclick="resetAll()">Сбросить всё</button>
+    </div>
+  </div>
+
+  <div class="sec-title">Игры</div>
+  <div class="games">
+    <a href="slots.html" class="gc">
+      <div class="gc-badge">ТОП</div>
+      <span class="gc-icon">🎰</span>
+      <div class="gc-name">Слоты</div>
+      <div class="gc-desc">Крути барабаны, собирай комбинации. Джекпот ×50!</div>
+      <div class="gc-rtp">Выплата до <span>×50</span></div>
+    </a>
+    <a href="roulette.html" class="gc">
+      <span class="gc-icon">🎡</span>
+      <div class="gc-name">Рулетка</div>
+      <div class="gc-desc">Европейская рулетка. Ставь на цвет, чётность или число.</div>
+      <div class="gc-rtp">Выплата до <span>×35</span></div>
+    </a>
+    <a href="blackjack.html" class="gc">
+      <span class="gc-icon">🃏</span>
+      <div class="gc-name">Блэкджек</div>
+      <div class="gc-desc">Набери 21 и побей дилера. Классика карточных игр.</div>
+      <div class="gc-rtp">Выплата до <span>×2.5</span></div>
+    </a>
+    <a href="dice.html" class="gc">
+      <span class="gc-icon">🎲</span>
+      <div class="gc-name">Кости</div>
+      <div class="gc-desc">Брось кости и угадай результат. Быстро и азартно!</div>
+      <div class="gc-rtp">Выплата до <span>×5</span></div>
+    </a>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-v" id="s-spins">—</div>
+      <div class="stat-l">Всего спинов</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-v" id="s-wins">—</div>
+      <div class="stat-l">Побед</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-v" id="s-best">—</div>
+      <div class="stat-l">Лучший выигрыш</div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2025 GoldSpin Casino · Только для развлечения · 18+</footer>
+
+<script>
+const K={bal:'gs_bal',spins:'gs_spins',wins:'gs_wins',best:'gs_best'};
+const get=k=>parseInt(localStorage.getItem(k)||0);
+function getBal(){return parseInt(localStorage.getItem(K.bal)||1000);}
+function refresh(){
+  const b=getBal();
+  document.getElementById('nav-bal').textContent=b;
+  document.getElementById('bal-big').textContent=b;
+  document.getElementById('s-spins').textContent=get(K.spins);
+  document.getElementById('s-wins').textContent=get(K.wins);
+  document.getElementById('s-best').textContent=get(K.best)||'—';
+}
+function addBal(n){localStorage.setItem(K.bal,getBal()+n);refresh();GS.syncToServer();}
+function resetAll(){if(confirm('Сбросить всю статистику и баланс?')){Object.values(K).forEach(k=>localStorage.removeItem(k));localStorage.setItem(K.bal,1000);refresh();GS.syncToServer();}}
+
+const events=['<strong>Слоты:</strong> 7️⃣7️⃣7️⃣ Джекпот +5000 🎉','<strong>Рулетка:</strong> Красное → +400','<strong>Блэкджек:</strong> Натуральный блэкджек! +750','<strong>Кости:</strong> Ровно 7 → +300','<strong>Слоты:</strong> 💎💎💎 → +2500 🎊','<strong>Рулетка:</strong> Число 23 → +1750','<strong>Блэкджек:</strong> 21! Дабл+800','<strong>Кости:</strong> Дубль шестёрок → +600'];
+const t=document.getElementById('ticker');
+[...events,...events].forEach(e=>{const s=document.createElement('span');s.innerHTML=e;t.appendChild(s);});
+GS.initPage().then(refresh);
+
+</html>
